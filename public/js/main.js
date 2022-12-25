@@ -1,25 +1,46 @@
 const socket = io.connect()
-// const Contenedor = require(".../Contenedor.js")
-// const producto = new Contenedor("producto")
 
 // Escucho los mensajes enviados por el servidor
+// socket.on('products', productos => {
+//     const productosHTML =
+//         productos
+//             .map(pro =>
+//                 `<tr style="color:white;">
+//                 <th>NOMBRE</th>
+//                 <th>PRECIO</th>
+//                 <th>IMAGEN</th>
+//             </tr>
+//             <tr>
+//                 <td>
+//                     ${pro.title}
+//                 </td>
+//                 <td>
+//                     ${pro.price}
+//                 </td>
+//                 <td>
+//                     <img src="${pro.thumbnail}"></td>
+//                 </td>
+//             </tr>`)
+//             .join("");
+
+//     document.getElementById("productsContainer").innerHTML = productosHTML
+// })
+
+// Recepciono los productos enviados por el servidor
 socket.on("products", function (data) {
     console.log(data);
-    renderizar(data)
+    renderProductList(data)
 
 });
 
-function renderizar(data) {
-    let html = data.map(function(prod, index){
-        return (`<div>
-        <strong>${prod.title}</strong>
-        <strong>${prod.price}</strong>
-        <strong>${prod.image}</strong>
-        </div>
-        `)
-    }).join(" ");
-
-    document.getElementById("productos").innerHTML = html
+function renderProductList(data) {
+    fetch(`http://localhost:8080/productList.handlebars`)
+        .then((res) => res.text())
+        .then((res) => {
+            const template = Handlebars.compile(res)
+            const html = template({ products: data })
+            document.getElementById("productsContainer").innerHTML = html
+        })
 }
 
 function addProducts(e) {
@@ -32,6 +53,39 @@ function addProducts(e) {
     document.getElementById("title").value = ""
     document.getElementById("price").value = ""
     document.getElementById("image").value = ""
+
+    return false;
+}
+
+//Web Chat
+// Escucho los mensajes enviados por el servidor
+socket.on("messages", function (data) {
+    console.log(data)
+    renderizar(data)
+});
+
+function renderizar(data) {
+    let html = data.map(function (elem, index) {
+        return (`<div>
+        <strong style="color:blue">${elem.author}</strong>
+        <em style="color:brown">[${elem.dateMsg}]:</em>
+        <em style="color:green;font-style:italic">${elem.text}</em>
+        
+        </div>
+        `)
+    }).join(" ");
+    document.getElementById("messages").innerHTML = html
+}
+
+function addMessage(e) {
+    let mensaje = {
+        author: document.getElementById("author").value,
+        text: document.getElementById("text").value,
+        dateMsg: new Date().toLocaleString()
+    }
+    socket.emit("newMessage", mensaje)
+    document.getElementById("author").value = ""
+    document.getElementById("text").value = ""
 
     return false;
 }

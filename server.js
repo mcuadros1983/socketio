@@ -9,23 +9,36 @@ app.use(express.static('public'))
 app.engine("handlebars", engine())
 app.set("views", "./views") //declarar extension y ubicacion
 app.set("view engine", "handlebars") //declarar el motor y extension
-app.use(express.urlencoded({extended:true}))
+app.use(express.urlencoded({ extended: true }))
 
+//Carga de productos
 let products = [];
 
- io.on('connection', function(socket) {
+io.on('connection', function (socket) {
     console.log('Un cliente se ha conectado');
     socket.emit('products', products);
 
-    socket.on("newProduct", function(data){
+    socket.on("newProduct", function (data) {
         products.push(data)
         io.sockets.emit("products", products)
     })
 });
 
+//Web Chat
+let messages = [];
+
+io.on('connection', function (socket) {
+    socket.emit('messages', messages);
+
+    socket.on("newMessage", function (data) {
+        messages.push(data)
+        io.sockets.emit("messages", messages)
+    })
+});
+
 //Ruta para cargar nuestro archivo index.html en la raiz de la misma
 app.get('/', (req, res) => {
-    res.sendFile('index.html', { root: __dirname })
+    res.sendFile('index.html', { root: __dirname + "/views" })
 })
 
 const PORT = 8080

@@ -11,12 +11,12 @@
 </head>
 <body>
     <div class="container" style="background: rgb(174, 203, 214);">
-        <div class="jumbotron" style="height:100vh">
-            <h1 style="color:blue">INGRESE PRODUCTO</h1>
+        <div class="jumbotron">
+            <h2 style="color:blue">Ingrese Producto</h2>
             <br>
             <form onsubmit=" return addProducts(this)">
                 <div class="form-group">
-                    <i><label >Nombre</label></i>
+                    <i><label>Nombre</label></i>
                     <input id="title" type="text" class="form-control" name="title">
                 </div>
                 <div class="form-group">
@@ -30,11 +30,27 @@
 
                 <button type="submit" class="btn btn-success mt-3 mb-5">Enviar</button>
             </form>
-            <div id="productos"></div>
-            <!-- {{!-- <a href="./productos"><button type="button" class="btn btn-secondary">Ver Productos</button></a> --}} -->
-            <script src="js/main.js"></script>
+            <div>
+
+                <table id="productsContainer" class="table table-dark" style="text-align: center;">
+                </table>
+            </div>
+        </div>
+
+        <div class="jumbotron">
+            <h2 style="color:blue">Centro de Mensajes</h2>
+            <br>
+            <form onsubmit=" return addMessage(this)">
+                <input type="text" id="author" placeholder="Tu email">
+                <div id="messages"></div>
+                <input type="text" id="text" placeholder="Ingresa tu mensaje"> <button type="submit"
+                    class="btn btn-primary">Enviar</button>
+            </form>
         </div>
     </div>
-    
+
+
+    <script src="js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
 </body>
 </html>
