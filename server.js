@@ -3,6 +3,8 @@ const app = express()
 const server = require("http").Server(app)
 const io = require("socket.io")(server)
 const { engine } = require('express-handlebars')
+const Contenedor = require("./Contenedor.js")
+const mensajes = new Contenedor("mensajes")
 
 
 app.use(express.static('public'))
@@ -29,10 +31,19 @@ let messages = [];
 
 io.on('connection', function (socket) {
     socket.emit('messages', messages);
-
     socket.on("newMessage", function (data) {
         messages.push(data)
         io.sockets.emit("messages", messages)
+        messages.map((elem) => {
+            mensajes
+                .save(elem)
+                // .then((data) => res.send(data))
+                .then(elem)
+                .catch((error) => {
+                    // res.send({ error: error.message })
+                    console.log(error)
+                })
+        })
     })
 });
 

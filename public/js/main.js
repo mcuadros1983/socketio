@@ -1,36 +1,11 @@
-const socket = io.connect()
-
-// Escucho los mensajes enviados por el servidor
-// socket.on('products', productos => {
-//     const productosHTML =
-//         productos
-//             .map(pro =>
-//                 `<tr style="color:white;">
-//                 <th>NOMBRE</th>
-//                 <th>PRECIO</th>
-//                 <th>IMAGEN</th>
-//             </tr>
-//             <tr>
-//                 <td>
-//                     ${pro.title}
-//                 </td>
-//                 <td>
-//                     ${pro.price}
-//                 </td>
-//                 <td>
-//                     <img src="${pro.thumbnail}"></td>
-//                 </td>
-//             </tr>`)
-//             .join("");
-
-//     document.getElementById("productsContainer").innerHTML = productosHTML
-// })
+const socket = io.connect();
+// const Contenedor = require("./Contenedor.js")
+// const mensajes = new Contenedor("mensajes")
 
 // Recepciono los productos enviados por el servidor
 socket.on("products", function (data) {
     console.log(data);
     renderProductList(data)
-
 });
 
 function renderProductList(data) {
@@ -53,7 +28,6 @@ function addProducts(e) {
     document.getElementById("title").value = ""
     document.getElementById("price").value = ""
     document.getElementById("image").value = ""
-
     return false;
 }
 
@@ -69,8 +43,7 @@ function renderizar(data) {
         return (`<div>
         <strong style="color:blue">${elem.author}</strong>
         <em style="color:brown">[${elem.dateMsg}]:</em>
-        <em style="color:green;font-style:italic">${elem.text}</em>
-        
+        <em style="color:green;font-style:italic">${elem.text}</em>    
         </div>
         `)
     }).join(" ");
@@ -84,8 +57,13 @@ function addMessage(e) {
         dateMsg: new Date().toLocaleString()
     }
     socket.emit("newMessage", mensaje)
+    // mensajes
+    //     .save(messages)
+    //     .then((data) => res.send(data))
+    //     .catch((error) => {
+    //         res.send({ error: error.message })
+    //     })
     document.getElementById("author").value = ""
     document.getElementById("text").value = ""
-
     return false;
 }
