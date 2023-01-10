@@ -5,6 +5,7 @@ const io = require("socket.io")(server)
 const { engine } = require('express-handlebars')
 const Contenedor = require("./Contenedor.js")
 const mensajes = new Contenedor("mensajes")
+const productos = new Contenedor("productos")
 
 
 app.use(express.static('public'))
@@ -14,38 +15,24 @@ app.set("view engine", "handlebars") //declarar el motor y extension
 app.use(express.urlencoded({ extended: true }))
 
 //Carga de productos
-let products = [];
-
-io.on('connection', function (socket) {
+io.on('connection', async function (socket) {
     console.log('Un cliente se ha conectado');
-    socket.emit('products', products);
-
-    socket.on("newProduct", function (data) {
-        products.push(data)
-        io.sockets.emit("products", products)
+    socket.emit('products',  await productos.getAll());
+    socket.on("newProduct", async (data) => {
+        await productos.save(data)
+        io.sockets.emit("products", await productos.getAll())
     })
 });
 
 //Web Chat
-let messages = [];
-
-io.on('connection', function (socket) {
-    socket.emit('messages', messages);
-    socket.on("newMessage", function (data) {
-        messages.push(data)
-        io.sockets.emit("messages", messages)
-        messages.map((elem) => {
-            mensajes
-                .save(elem)
-                // .then((data) => res.send(data))
-                .then(elem)
-                .catch((error) => {
-                    // res.send({ error: error.message })
-                    console.log(error)
-                })
-        })
+io.on('connection', async function (socket) {
+    socket.emit('messages',  await mensajes.getAll());
+    socket.on("newMessage", async (data) => {
+        await mensajes.save(data)
+        io.sockets.emit("messages", await mensajes.getAll())
     })
 });
+
 
 //Ruta para cargar nuestro archivo index.html en la raiz de la misma
 app.get('/', (req, res) => {
